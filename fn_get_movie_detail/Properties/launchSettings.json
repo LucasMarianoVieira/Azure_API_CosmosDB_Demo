@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "fn_get_movie_detail": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7289",
+      "launchBrowser": false
+    }
+  }
+}

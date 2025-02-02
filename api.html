@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Movie Cards</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	</head>
+	<body>
+		<div class="container my-4">
+			<div class="row" id="movie-cards"></div>
+		</div>
+
+		<!-- Modal-->
+		<div class="modal fade" id="movie_modal" tabindex="-1" aria-labelledby="movie_modal_label" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="movie_modal_label">Movie Detail</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+					</div>
+					<div class="modal-body">
+						<video id="movie_video" controls style="width: 100%;">
+							<source src="" type="video/mp4">
+							Your Browser does not support the video tag
+						</video>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+		<script>
+			// Fetch movies and display the cards
+			async function fetch_movies() {
+				try {
+					const response = await fetch("http://localhost:7071/api/get_all_movies");
+					const movies = await response.json();
+
+					const movie_cards = document.getElementById("movie-cards");
+					movie_cards.innerHTML = "";
+					console.log(movies)
+					movies.forEach(movie => {
+						const card = document.createElement("div");
+						card.classList.add("col-md-4", "mb-4");
+						card.innerHTML = `
+							<div class="card" data-id="${movie.id}" style="cursor: pointer;">
+								<img src="${movie.thumb}" class="card-img-top" alt="${movie.title}">
+								<div class="card-body">
+									<h5 class="card-title">${movie.title}</h5>
+								</div>
+							</div>
+						`;
+						card.addEventListener("click", () => fetch_movie_detail(movie.id));
+						movie_cards.appendChild(card);
+					});
+
+				} catch (error) {
+					console.error("Error fetching movies: ", error);
+				}
+			}
+
+			async function fetch_movie_detail(movie_id) {
+				try {
+					const response = await fetch(`http://localhost:7071/api/detail?id=${movie_id}`);
+					const movie_detail = await response.json();
+
+					const movie_video = document.getElementById("movie_video");
+					movie_video.src = movie_detail.video;
+
+					const movie_modal = new bootstrap.Modal(document.getElementById("movie_modal"));
+					movie_modal.show();
+
+				} catch (error) {
+					console.error("Error fetching movie detail: ", error);
+				}
+			}
+
+			fetch_movies();
+		</script>
+	</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "fn_get_all_movies": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7083",
+      "launchBrowser": false
+    }
+  }
+}
